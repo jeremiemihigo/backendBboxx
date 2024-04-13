@@ -130,9 +130,9 @@ module.exports = {
             unwindRegion,
             lookAction,
             project,
-            {
-              $match : {"shop.idShop" : shop}
-            }
+            // {
+            //   $match : {"shop.idShop" : shop}
+            // }
             // sort,
           ], {allowDiskUse: true}).then((response) => {
            
