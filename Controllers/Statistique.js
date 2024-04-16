@@ -4,6 +4,36 @@ const asyncLab = require('async')
 const modelPeriode = require("../Models/Periode")
 
 module.exports = {
+  demandePourChaquePeriode: (req, res) => {
+    try {
+      modelDemande
+        .aggregate([
+          {
+            $lookup: {
+              from: 'reponses',
+              localField: 'idDemande',
+              foreignField: 'idDemande',
+              as: 'reponse',
+            },
+          },
+          { $unwind: '$reponse' },
+          {
+            $group: {
+              _id: '$lot',
+              total: { $sum: 1 },
+            },
+          },
+          {
+            $sort : {_id : -1}
+          }
+        ])
+        .then((result) => {
+          return res.status(200).json(result.reverse())
+        })
+    } catch (error) {
+      console.log(error)
+    }
+  },
   readPeriodeGroup: (req, res) => {
     try {
       const { codeAgent } = req.user

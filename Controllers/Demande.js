@@ -6,7 +6,8 @@ const asyncLab = require('async')
 const { generateNumber } = require('../Static/Static_Function')
 const { ObjectId } = require('mongodb')
 const modelShop = require("../Models/Shop")
-const dayjs = require("dayjs")
+const modelRapport = require("../Models/Rapport")
+
 
 module.exports = {
   demande: (req, res) => {
@@ -203,7 +204,7 @@ module.exports = {
     try {
       asyncLab.waterfall([
         function (done) {
-          ModelPeriode.findOne({})
+          ModelPeriode.findOne({}).lean()
             .then((periode) => {
               if (periode) {
                 done(null, periode)
@@ -216,30 +217,7 @@ module.exports = {
             })
         },
         function (periode, done) {
-          modelReponse
-            .aggregate([
-              
-              {
-                $lookup: {
-                  from: 'agentadmins',
-                  localField: 'codeAgent',
-                  foreignField: 'codeAgent',
-                  as: 'agent',
-                },
-              },
-              {
-                $lookup: {
-                  from: 'demandes',
-                  localField: 'idDemande',
-                  foreignField: 'idDemande',
-                  as: 'demande',
-                },
-              },
-           
-              { $unwind: '$agent' },
-              { $unwind: '$demande' },
-              { $match : {"demande.lot" : periode.periode} },
-            ])
+          modelRapport.find({"demande.lot" : periode.periode}).lean()
             .then((response) => {
               return res.status(200).json(response)
             })
