@@ -383,7 +383,7 @@ module.exports = {
     try {
       asyncLab.waterfall([
         function (done) {
-          ModelPeriode.findOne({})
+          ModelPeriode.findOne({}).lean()
             .then((periode) => {
               if (periode) {
                 done(null, periode)
@@ -403,7 +403,6 @@ module.exports = {
                   valide: false,
                   lot: periode.periode,
                   feedback:"new",
-                  double : {$exists : false}
                 },
               },
               {
